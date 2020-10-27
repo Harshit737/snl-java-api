@@ -3,6 +3,9 @@ package com.qainfotech.tap.training.snl.api;
 import java.util.UUID;
 import java.util.Random;
 import java.io.IOException;
+
+import static org.testng.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -97,11 +100,13 @@ public class Board {
     public JSONArray deletePlayer(UUID playerUuid)
             throws NoUserWithSuchUUIDException, FileNotFoundException,
                 UnsupportedEncodingException{
-        Boolean response = false;
+     System.out.println("PLayer uuid="+playerUuid);  
+    	Boolean response = false;
         for(int i = 0; i < data.getJSONArray("players").length(); i++){
             JSONObject player = data.getJSONArray("players").getJSONObject(i);
+            System.out.println("UUID present in file"+player.get("uuid").toString());
             
-            if(player.getString("uuid").equals(playerUuid.toString())){
+            if(player.get("uuid").toString().equals(playerUuid.toString())){
                 data.getJSONArray("players").remove(i);
                 data.put("turn", 0);
                 BoardModel.save(uuid, data);
@@ -135,6 +140,8 @@ public class Board {
             Integer dice = new Random().nextInt(6) + 1;
             Integer currentPosition = player.getInt("position");
             Integer newPosition = currentPosition + dice;
+            if(currentPosition ==100)   return null;
+           // assertEquals(currentPosition, 100);
             String message = "";
             String playerName = player.getString("name");
             if(newPosition <= 100){
